@@ -1,0 +1,23 @@
+[package]
+name = "uma_sound_replace"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Decoders for the user's files (pure Rust).
+symphonia = { version = "0.5.4", default-features = false, features = ["wav", "pcm", "mp3", "flac", "ogg", "vorbis"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+# unwind (not abort) so a bug is caught and logged instead of taking the game
+# down: every host callback and hook is wrapped in catch_unwind.
+panic = "unwind"
+strip = true
+
+# Decoding in a debug build (tests) is slow otherwise.
+[profile.dev.package."*"]
+opt-level = 2
